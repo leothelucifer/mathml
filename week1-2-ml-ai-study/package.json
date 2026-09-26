@@ -19,6 +19,7 @@
     "@codemirror/view": "^6.43.13",
     "@vitejs/plugin-react": "latest",
     "codemirror": "^6.0.2",
+    "firebase": "^12.19.0",
     "katex": "latest",
     "lucide-react": "latest",
     "react": "18.3.1",

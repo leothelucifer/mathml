@@ -1,6 +1,7 @@
 import React from 'react';
+import { localChanged, registerStore } from './sync/registry.js';
 
-// Homework progress, kept in this browser only. For each part: the distinct answers checked, whether it
+// Homework progress, kept in this browser (and in the student's account when signed in, see sync/). For each part: the distinct answers checked, whether it
 // is solved and how (tier), and how many clues were shown. For each problem: whether the full solution
 // has been opened, and the student's note on where they were stuck.
 //   tier 'own'      right on the first try, with no clue and before the solution
@@ -29,7 +30,7 @@ if (typeof window !== 'undefined') {
   });
 }
 
-function save(next) {
+function save(next, fromSync = false) {
   state = next;
   try {
     window.localStorage.setItem(KEY, JSON.stringify(state));
@@ -37,7 +38,19 @@ function save(next) {
     // Progress still shows for this visit; it just will not survive a reload.
   }
   listeners.forEach((listener) => listener());
+  if (!fromSync) localChanged('homework');
 }
+
+// How far a problem has got, to pick between two versions changed on different devices.
+function effort(entry) {
+  return Object.values(entry?.parts ?? {}).reduce((sum, part) => sum + (part.solved ? 1000 : 0) + (part.tries ?? 0) + (part.clues ?? 0), entry?.solution ? 1 : 0);
+}
+
+registerStore('homework', {
+  read: () => state,
+  write: (entries) => save(entries, true),
+  merge: (mine, theirs) => (effort(theirs) > effort(mine) ? theirs : mine),
+});
 
 const problemKey = (setKey, problemId) => `${setKey}#${problemId}`;
 const emptyPart = { tries: 0, answers: [], solved: false, tier: null, clues: 0 };

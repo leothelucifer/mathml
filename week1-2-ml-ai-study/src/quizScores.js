@@ -1,6 +1,7 @@
 import React from 'react';
+import { localChanged, registerStore } from './sync/registry.js';
 
-// Best quiz score per concept or topic, kept in this browser only.
+// Best quiz score per concept or topic, kept in this browser (and in their account when signed in).
 const KEY = 'mathml-study:quiz:v1';
 const listeners = new Set();
 
@@ -24,17 +25,29 @@ if (typeof window !== 'undefined') {
   });
 }
 
-export function recordQuizScore(quizId, correct, total) {
-  const previous = scores[quizId];
-  const best = previous && previous.total === total ? Math.max(previous.best, correct) : correct;
-  scores = { ...scores, [quizId]: { best, total, last: correct } };
+function save(next, fromSync = false) {
+  scores = next;
   try {
     window.localStorage.setItem(KEY, JSON.stringify(scores));
   } catch {
     // Scores still show for this visit; they just will not survive a reload.
   }
   listeners.forEach((listener) => listener());
+  if (!fromSync) localChanged('quiz');
 }
+
+export function recordQuizScore(quizId, correct, total) {
+  const previous = scores[quizId];
+  const best = previous && previous.total === total ? Math.max(previous.best, correct) : correct;
+  save({ ...scores, [quizId]: { best, total, last: correct } });
+}
+
+registerStore('quiz', {
+  read: () => scores,
+  write: (entries) => save(entries, true),
+  // The same quiz taken on two devices: keep the better best score.
+  merge: (mine, theirs) => (mine.total === theirs.total && theirs.best > mine.best ? { ...mine, best: theirs.best } : mine),
+});
 
 export function useQuizScores() {
   const [, force] = React.useReducer((count) => count + 1, 0);

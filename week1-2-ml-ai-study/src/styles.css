@@ -21,6 +21,25 @@ button { font: inherit; }
 .brand-button { display: inline-flex; align-items: center; gap: 10px; padding: 10px 12px; font-weight: 700; }
 .top-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .top-actions button { padding: 8px 11px; }
+.top-actions { margin-left: auto; }
+.account { position: relative; flex-shrink: 0; }
+.account-signin, .account-panel button { display: inline-flex; align-items: center; gap: 7px; padding: 8px 11px; border: 1px solid var(--line); border-radius: 8px; background: #fffdf8; color: var(--ink); font-weight: 700; cursor: pointer; }
+.account-signin:disabled, .account-panel button:disabled { opacity: 0.6; cursor: default; }
+.account-message { position: absolute; right: 0; top: calc(100% + 6px); width: min(300px, 80vw); margin: 0; padding: 8px 10px; background: #fffdf8; border: 1px solid #c9745a; border-radius: 8px; color: #8a3b24; font-size: 0.86rem; line-height: 1.35; box-shadow: var(--shadow); }
+.account summary { list-style: none; display: inline-flex; align-items: center; gap: 7px; padding: 5px 9px 5px 5px; border: 1px solid var(--line); border-radius: 999px; background: #fffdf8; cursor: pointer; font-weight: 700; }
+.account summary::-webkit-details-marker { display: none; }
+.account summary img, .account-initial { width: 26px; height: 26px; border-radius: 50%; }
+.account-initial { display: inline-grid; place-items: center; background: var(--ink); color: var(--paper); font-size: 0.85rem; }
+.account-sync { color: #2f7d5b; }
+.account-sync.syncing { color: var(--muted); }
+.account-sync.error { color: #b0502f; }
+.account-panel { position: absolute; right: 0; top: calc(100% + 8px); z-index: 20; display: grid; gap: 6px; width: min(300px, 86vw); padding: 14px; background: #fffdf8; border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); }
+.account-email { color: var(--muted); font-size: 0.88rem; overflow-wrap: anywhere; }
+.account-status { margin: 4px 0 0; font-weight: 700; font-size: 0.9rem; color: #2f7d5b; }
+.account-status.syncing { color: var(--muted); }
+.account-status.error { color: #b0502f; }
+.account-note { margin: 0; color: var(--muted); font-size: 0.85rem; line-height: 1.4; }
+.account-panel button { justify-self: start; margin-top: 4px; }
 button:hover { transform: translateY(-1px); box-shadow: var(--shadow); border-color: #a9977f; }
 .landing, .concept-page { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 34px 0 70px; }
 .landing-full { width: min(100% - 20px, 1500px); padding-top: 14px; }
@@ -310,6 +329,7 @@ fieldset:disabled .quiz-option { cursor: default; }
 .topic-children .quiz-badge { margin-left: 6px; vertical-align: middle; }
 
 @media (max-width: 760px) {
+  .account-panel, .account-message { left: 0; right: auto; }
   .topbar, .map-heading, .graph-title-row, .landing-tabs, .cluster-toolbar { align-items: flex-start; flex-direction: column; }
   .overview-map { grid-template-columns: 1fr; }
   .overview-svg { min-height: 720px; }
