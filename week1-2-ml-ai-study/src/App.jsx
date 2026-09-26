@@ -22,6 +22,7 @@ import { Quiz, QuizBadge } from './components/Quiz.jsx';
 import { quizzes } from './data/quizzes.js';
 import { homework } from './data/homework.js';
 import { HomeworkForPage, HomeworkPage } from './components/Homework.jsx';
+import { AccountMenu } from './components/AccountMenu.jsx';
 import { isTrackId, trackIds, trackOrder, tracks } from './data/learningTracks.js';
 
 // Routes live in the URL hash so Back/Forward and shared links work:
@@ -117,6 +118,7 @@ export function App() {
             <button key={trackId} className={route.trackId === trackId ? 'active' : ''} onClick={() => showTrack(trackId)}>{tracks[trackId].title}</button>
           ))}
         </nav>
+        <AccountMenu />
       </header>
 
       {route.homeworkKey ? (

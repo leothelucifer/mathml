@@ -1,7 +1,8 @@
 import React from 'react';
+import { localChanged, registerStore } from './sync/registry.js';
 
-// Which concepts the student has marked as done, kept in this browser only. One list is shared by
-// both tracks, so a concept in both (feature vectors) is ticked once.
+// Which concepts the student has marked as done, kept in this browser (and in their account when signed
+// in, see sync/). One list is shared by both tracks, so a concept in both (feature vectors) is ticked once.
 const KEY = 'mathml-study:done:v1';
 const listeners = new Set();
 
@@ -16,7 +17,7 @@ function readDone() {
 
 let done = readDone();
 
-function setDone(next) {
+function setDone(next, fromSync = false) {
   done = next;
   try {
     window.localStorage.setItem(KEY, JSON.stringify([...next]));
@@ -24,7 +25,13 @@ function setDone(next) {
     // Progress still works for this visit; it just will not survive a reload.
   }
   listeners.forEach((listener) => listener());
+  if (!fromSync) localChanged('done');
 }
+
+registerStore('done', {
+  read: () => Object.fromEntries([...done].map((id) => [id, true])),
+  write: (entries) => setDone(new Set(Object.keys(entries)), true),
+});
 
 // Keep several open tabs in sync.
 if (typeof window !== 'undefined') {
